@@ -41,6 +41,8 @@ namespace Plant_Watering_App_Backend
             if (env == "Development")
             {
                 services.AddScoped<IPlantRepository, FakePlantRepository>();
+                //services.AddScoped<IPlantRepository, PlantRepository>();
+
             }
             else 
             {

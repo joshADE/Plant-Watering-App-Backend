@@ -18,9 +18,10 @@ namespace Plant_Watering_App_Backend.Dal.Repositories
         }
         public async Task<Plant> CreatePlantAsync(Plant plant)
         {
-            _context.Plants.Add(plant);
+            var newPlant = new Plant { lastWateredTime = null, name = plant.name, status = Plant.WateringStatus.Idle, wateringPercentage = 0 };
+            _context.Plants.Add(newPlant);
             await _context.SaveChangesAsync();
-            return plant;
+            return newPlant;
         }
 
         public async Task<Plant> DeletePlantAsync(int id)
@@ -49,7 +50,13 @@ namespace Plant_Watering_App_Backend.Dal.Repositories
 
         public async Task<Plant> UpdatePlantAsync(Plant plant)
         {
-            _context.Entry(plant).State = EntityState.Modified;
+            var foundPlant = await GetPlantById(plant.id);
+            if (foundPlant == null)
+            {
+                return null;
+            }
+            _context.Entry(foundPlant).State = EntityState.Detached;
+            _context.Plants.Update(plant);
             await _context.SaveChangesAsync();
             return plant;
             
